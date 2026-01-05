@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/User/Documents/Workflow-CI_Anwar-Muslim/MLProject/mlruns/889016720899699234/3296bb9dd78a41c4966dd33190f83a34/artifacts
+end_time: 1767629168897
+entry_point_name: ''
+experiment_id: '889016720899699234'
+lifecycle_stage: active
+run_id: 3296bb9dd78a41c4966dd33190f83a34
+run_name: Hyperparameter_Tuning_Skilled
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1767629103636
+status: 3
+tags: []
+user_id: User

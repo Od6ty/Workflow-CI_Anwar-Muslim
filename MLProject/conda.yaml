@@ -1,0 +1,11 @@
+name: taxi-env
+channels:
+  - defaults
+dependencies:
+  - python=3.11.4
+  - pip
+  - pip:
+    - mlflow==3.8.1
+    - scikit-learn
+    - pandas
+    - numpy
