@@ -1,0 +1,79 @@
+name: CI Workflow - Anwar Muslim
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'MLProject/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'MLProject/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+jobs:
+  model-retraining:
+    name: Re-training Model dengan MLflow
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mlflow==3.8.1 scikit-learn pandas numpy
+    
+    - name: Verifikasi Data Training
+      run: |
+        echo "Memverifikasi ketersediaan data training..."
+        if [ ! -f "MLProject/taxi_tripdata_preprocessing/train.csv" ]; then
+          echo "ERROR: File train.csv tidak ditemukan!"
+          exit 1
+        fi
+        if [ ! -f "MLProject/taxi_tripdata_preprocessing/test.csv" ]; then
+          echo "ERROR: File test.csv tidak ditemukan!"
+          exit 1
+        fi
+        echo "✓ Data training tersedia"
+    
+    - name: Run Model Training & Hyperparameter Tuning
+      working-directory: MLProject
+      run: |
+        echo "Memulai re-training model..."
+        echo "=========================================="
+        python Modelling_Tuning.py
+        echo "=========================================="
+        echo "Re-training selesai!"
+    
+    - name: Verifikasi Hasil Training
+      working-directory: MLProject
+      run: |
+        if [ ! -d "mlruns" ]; then
+          echo "ERROR: Folder mlruns tidak ditemukan setelah training!"
+          exit 1
+        fi
+        echo "✓ MLflow runs berhasil dibuat"
+        ls -la mlruns/
+    
+    - name: Upload MLflow Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: mlflow-artifacts-anwar
+        path: MLProject/mlruns/
+        retention-days: 30
+        if-no-files-found: error
+    
+    - name: Summary Training
+      if: success()
+      run: |
+        echo "## Re-training Berhasil" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
