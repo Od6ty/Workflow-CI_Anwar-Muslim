@@ -50,7 +50,7 @@ jobs:
       run: |
         echo "Memulai re-training model..."
         echo "=========================================="
-        python Modelling_Tuning.py
+        python modelling_tuning.py
         echo "=========================================="
         echo "Re-training selesai!"
     
@@ -61,7 +61,7 @@ jobs:
           echo "ERROR: Folder mlruns tidak ditemukan setelah training!"
           exit 1
         fi
-        echo "✓ MLflow runs berhasil dibuat"
+        echo ""
         ls -la mlruns/
     
     - name: Upload MLflow Artifacts
