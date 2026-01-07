@@ -17,18 +17,32 @@ jobs:
   model-retraining:
     name: Re-training Model dengan MLflow
     runs-on: ubuntu-latest
+    env:
+      DATA_FOLDER: "taxi_tripdata_preprocessing"
+      TARGET_VAR: "fare_amount"
+      RANDOM_STATE: 42
+      CV_FOLDS: 3
+      MLFLOW_EXPERIMENT: "Eksperimen_Taxi_Skilled_Anwar"
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
       
     - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         python-version: '3.11'
         auto-update-conda: true
-        activate-environment: ''
+        auto-activate-base: false
+        conda-forge: true
+    
+    - name: Initialize Conda
+      shell: bash -l {0}
+      run: |
+        conda info
+        conda list
     
     - name: Install MLflow
+      shell: bash -l {0}
       run: |
         conda install -y pip
         pip install --upgrade pip
@@ -61,6 +75,7 @@ jobs:
         echo "✓ Konfigurasi MLflow Project tersedia"
     
     - name: Run Model Training & Hyperparameter Tuning dengan MLflow
+      shell: bash -l {0}
       run: |
         echo "Memulai re-training model dengan MLflow..."
         echo "=========================================="
