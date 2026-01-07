@@ -23,6 +23,7 @@ jobs:
       RANDOM_STATE: 42
       CV_FOLDS: 3
       MLFLOW_EXPERIMENT: "Eksperimen_Taxi_Skilled_Anwar"
+      MLFLOW_TRACKING_URI: "file:./mlruns"
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -76,10 +77,14 @@ jobs:
     
     - name: Run Model Training & Hyperparameter Tuning dengan MLflow
       shell: bash -l {0}
+      working-directory: MLProject
+      env:
+        MLFLOW_TRACKING_URI: "file:./mlruns"
       run: |
         echo "Memulai re-training model dengan MLflow..."
         echo "=========================================="
-        mlflow run MLProject -e main
+        echo "MLFLOW_TRACKING_URI: $MLFLOW_TRACKING_URI"
+        mlflow run . -e main
         echo "=========================================="
         echo "Re-training selesai!"
     
