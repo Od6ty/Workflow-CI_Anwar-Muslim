@@ -80,11 +80,13 @@ jobs:
       working-directory: MLProject
       env:
         MLFLOW_TRACKING_URI: "file:./mlruns"
+        MLFLOW_EXPERIMENT_NAME: "Eksperimen_Taxi_Skilled_Anwar"
       run: |
         echo "Memulai re-training model dengan MLflow..."
         echo "=========================================="
         echo "MLFLOW_TRACKING_URI: $MLFLOW_TRACKING_URI"
-        mlflow run . -e main
+        echo "MLFLOW_EXPERIMENT_NAME: $MLFLOW_EXPERIMENT_NAME"
+        mlflow run . -e main --experiment-name "$MLFLOW_EXPERIMENT_NAME"
         echo "=========================================="
         echo "Re-training selesai!"
     

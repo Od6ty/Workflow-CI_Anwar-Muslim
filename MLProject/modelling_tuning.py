@@ -9,8 +9,12 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Setup MLflow Tracking (Lokal)
 # Saat di GitHub Actions, ini akan membuat folder ./mlruns
-mlflow.set_tracking_uri("file:./mlruns")
-mlflow.set_experiment("Eksperimen_Taxi_Skilled_Anwar")
+# Jika dijalankan via mlflow run, tracking URI dan experiment sudah di-set oleh mlflow run
+# Hanya set jika belum di-set (untuk local testing)
+if os.getenv("MLFLOW_TRACKING_URI") is None:
+    mlflow.set_tracking_uri("file:./mlruns")
+if os.getenv("MLFLOW_EXPERIMENT_NAME") is None:
+    mlflow.set_experiment("Eksperimen_Taxi_Skilled_Anwar")
 
 def load_data(folder_path):
     print(f"[INFO] Loading data from {folder_path}...")
@@ -57,8 +61,17 @@ def main():
     )
 
     # Start Run (Manual Logging untuk Skilled)
+    # Jika sudah ada active run (dari mlflow run), gunakan nested run
     print("[INFO] Memulai MLflow Run...")
-    with mlflow.start_run(run_name="Hyperparameter_Tuning_Skilled"):
+    active_run = mlflow.active_run()
+    if active_run is None:
+        # Tidak ada active run, buat run baru
+        run_context = mlflow.start_run(run_name="Hyperparameter_Tuning_Skilled")
+    else:
+        # Ada active run dari mlflow run, buat nested run
+        run_context = mlflow.start_run(run_name="Hyperparameter_Tuning_Skilled", nested=True)
+    
+    with run_context:
         
         print("[INFO] Memulai Grid Search...")
         grid_search.fit(X_train, y_train)
